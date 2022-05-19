@@ -130,6 +130,7 @@ type __Schema {
   mutationType: __Type
   subscriptionType: __Type
   directives: [__Directive!]!
+  directiveAnnotations: [__DirectiveUse!]!
 }
 
 type __Type {
@@ -150,6 +151,7 @@ type __Type {
   ofType: __Type
   # may be non-null for custom SCALAR, otherwise null.
   specifiedByURL: String
+  directiveAnnotations: [__DirectiveUse!]!
 }
 
 enum __TypeKind {
@@ -170,6 +172,7 @@ type __Field {
   type: __Type!
   isDeprecated: Boolean!
   deprecationReason: String
+  directiveAnnotations: [__DirectiveUse!]!
 }
 
 type __InputValue {
@@ -177,6 +180,7 @@ type __InputValue {
   description: String
   type: __Type!
   defaultValue: String
+  directiveAnnotations: [__DirectiveUse!]!
 }
 
 type __EnumValue {
@@ -184,6 +188,7 @@ type __EnumValue {
   description: String
   isDeprecated: Boolean!
   deprecationReason: String
+  directiveAnnotations: [__DirectiveUse!]!
 }
 
 type __Directive {
@@ -192,6 +197,7 @@ type __Directive {
   locations: [__DirectiveLocation!]!
   args: [__InputValue!]!
   isRepeatable: Boolean!
+  isExposed: Boolean!
 }
 
 enum __DirectiveLocation {
@@ -215,6 +221,16 @@ enum __DirectiveLocation {
   INPUT_OBJECT
   INPUT_FIELD_DEFINITION
 }
+
+type __DirectiveUse {
+  directive: __Directive!
+  args: [__ArgumentUse!]!
+}
+
+type __ArgumentUse {
+  type: __InputValue!
+  value: String
+}
 ```
 
 ### The \_\_Schema Type
@@ -235,6 +251,8 @@ Fields\:
   must be included in this set.
 - `directives` must return the set of all directives available within this
   schema including all built-in directives.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this schema as a list of `__DirectiveUse`.
 
 ### The \_\_Type Type
 
@@ -293,6 +311,8 @@ Fields\:
     {true}, deprecated fields are also returned.
 - `interfaces` must return the set of interfaces that an object implements (if
   none, `interfaces` must return the empty set).
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this object declaration as a list of `__DirectiveUse`.
 - All other fields must return {null}.
 
 **Union**
@@ -308,6 +328,8 @@ Fields\:
 - `description` may return a String or {null}.
 - `possibleTypes` returns the list of types that can be represented within this
   union. They must be object types.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this union declaration as a list of `__DirectiveUse`.
 - All other fields must return {null}.
 
 **Interface**
@@ -329,6 +351,8 @@ Fields\:
   none, `interfaces` must return the empty set).
 - `possibleTypes` returns the list of types that implement this interface. They
   must be object types.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this interface declaration as a list of `__DirectiveUse`.
 - All other fields must return {null}.
 
 **Enum**
@@ -344,6 +368,8 @@ Fields\:
   There must be at least one and they must have unique names.
   - Accepts the argument `includeDeprecated` which defaults to {false}. If
     {true}, deprecated enum values are also returned.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this enum declaration as a list of `__DirectiveUse`.
 - All other fields must return {null}.
 
 **Input Object**
@@ -367,6 +393,8 @@ Fields\:
 - `name` must return a String.
 - `description` may return a String or {null}.
 - `inputFields` must return the set of input fields as a list of `__InputValue`.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this input object declaration as a list of `__DirectiveUse`.
 - All other fields must return {null}.
 
 **List**
@@ -417,6 +445,8 @@ Fields\:
 - `isDeprecated` returns {true} if this field should no longer be used,
   otherwise {false}.
 - `deprecationReason` optionally provides a reason why this field is deprecated.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this field as a list of `__DirectiveUse`.
 
 ### The \_\_InputValue Type
 
@@ -432,6 +462,8 @@ Fields\:
 - `defaultValue` may return a String encoding (using the GraphQL language) of
   the default value used by this input value in the condition a value is not
   provided at runtime. If this input value has no default value, returns {null}.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this input value as a list of `__DirectiveUse`.
 
 ### The \_\_EnumValue Type
 
@@ -445,6 +477,8 @@ Fields\:
   otherwise {false}.
 - `deprecationReason` optionally provides a reason why this enum value is
   deprecated.
+- `directiveAnnotations` must return the set of exposed directives
+  annotating this enum value as a list of `__DirectiveUse`.
 
 ### The \_\_Directive Type
 
@@ -485,3 +519,5 @@ Fields\:
   directive accepts.
 - `isRepeatable` must return a Boolean that indicates if the directive may be
   used repeatedly at a single location.
+- `isExposed` must return a Boolean that indicates if the directive use is
+  exposed in the introspection query.

@@ -1844,7 +1844,7 @@ Following are examples of result coercion with various types and values:
 ## Directives
 
 DirectiveDefinition : Description? directive @ Name ArgumentsDefinition?
-`repeatable`? on DirectiveLocations
+`repeatable`? `exposed`? on DirectiveLocations
 
 DirectiveLocations :
 
@@ -1972,6 +1972,9 @@ type Book @delegateField(name: "pageCount") @delegateField(name: "author") {
 
 extend type Book @delegateField(name: "index")
 ```
+
+Additionally, directive may be defined as exposed by including the "exposed" keyword.
+Making a directive exposed effects only its inclusion in "directiveAnnotations" list in introspection. Non-exposed directive are skipped from that list though they are not excluded from the "directives" list of the Schema.
 
 While defining a directive, it must not reference itself directly or indirectly:
 
