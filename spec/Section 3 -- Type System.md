@@ -1974,7 +1974,7 @@ extend type Book @delegateField(name: "index")
 ```
 
 Additionally, a directive may be defined as exposed by including the "exposed" keyword.
-Making a directive exposed effects only its inclusion in the "directiveAnnotations" list in introspection. Non-exposed directives are omitted from that list, even though they are not excluded from the "directives" list on the Schema.
+Making a directive exposed affects only its inclusion in the "directiveAnnotations" list in introspection. Non-exposed directives are omitted from that list, even though they are not excluded from the "directives" list on the Schema.
 
 While defining a directive, it must not reference itself directly or indirectly:
 
